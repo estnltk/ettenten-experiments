@@ -21,19 +21,19 @@
 	- Retagger `paragraphweblanguagescoreretagger.py` has to be accessible.
 	- The output of script `process_and_save_results.py` is required -- folder named `kirjak_vs_mittekirjak_ettenten_tagged`.
 
-* `retagger_results_kirjak_vs_mittekirjak_csv.py` -- creates a csv-file `weblang_scores_csv.csv`. In there all files with the total number of detected attributes are presented.
-	- Command line: `python retagger_results_kirjak_vs_mittekirjak_csv.py`
+* `retagger_results_kirjak_vs_mittekirjak_to_csv.py` -- creates a csv-file `weblang_scores_csv.csv`. In there all files with the total number of detected attributes are presented.
+	- Command line: `python retagger_results_kirjak_vs_mittekirjak_to_csv.py`
 	- Retagger `paragraphweblanguagescoreretagger.py` has to be accessible.
 	- The output of script `process_and_save_results.py` is required -- folder named `kirjak_vs_mittekirjak_ettenten_tagged`.
 
 * `testing_kirjak_vs_mittekirjak_whole_text_score.py` -- for testing purposes to find a threshold value - when files, based on their calculated whole text score, can automatically be labelled as *mittekirjak*.
 	- Command line: `python testing_kirjak_vs_mittekirjak_whole_text_score.py`
-	- The output of script `retagger_results_kirjak_vs_mittekirjak_csv.py` is required -- file named `weblang_scores_csv.csv`.
+	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores_csv.csv`.
 	- Currently threshold value 0.04 seems to give the best outcome.
 
 * `testing_kirjak_vs_mittekirjak_KNN.py` -- for testing purposes to find a k-value for categorizing files as *kirjak/mittekirjak* by cosine / euclidean distance and KNN algorithm.
 	- Command line: `python testing_kirjak_vs_mittekirjak_KNN.py`
-	- The output of script `retagger_results_kirjak_vs_mittekirjak_csv.py` is required -- file named `weblang_scores_csv.csv`.
+	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores_csv.csv`.
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all attributes + word_count aswell).
 
 

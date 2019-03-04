@@ -32,7 +32,7 @@ for file in os.listdir(path):
             info_files[i].append(sum(text.paragraphs[i]))
         info_all.append(info_files)
         
-with open ("weblang_scores_csv.csv","w") as csvfile:
+with open ("weblang_scores.csv","w") as csvfile:
     fieldnames=['filename', "doc_category"]
     for i in text.paragraphs.attributes:
         fieldnames.append(i)

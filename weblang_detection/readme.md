@@ -8,11 +8,11 @@
  
     The origins of the corpus: see the article by [Vaik and Muischnek (2018)](http://arhiiv.rakenduslingvistika.ee/ajakirjad/index.php/aastaraamat/article/view/ERYa14.13); documents of the corpus are available in the repository [https://github.com/kristiinavaik/veebikorpuse-klassifitseerimine](https://github.com/kristiinavaik/veebikorpuse-klassifitseerimine) ;
 
-* `paragraphweblanguagescoreretagger.py` -- retagger that adds scores of different attributes of web language to paragraph layer.
+* `paragraphweblanguagescoreretagger.py` -- retagger for detecting web language features in text. Web language features will be marked as attributes of the paragraphs layer.
 
 * `paragraphweblanguagescoreretagger_tutorial` -- tutorial on how to use paragraphweblanguagescoreretagger.
 
-* `process_and_save_results.py` -- script that takes json-files from a folder and adds them layers required by paragraphweblanguagescoreretagger. Output is a folder with tagged json-files.
+* `process_and_save_results.py` -- script that takes json-files from a folder and adds to them layers required by paragraphweblanguagescoreretagger. Output is a folder with tagged json-files.
 	- Command line: `python process_and_save_results.py kirjak_vs_mittekirjak_ettenten kirjak_vs_mittekirjak_ettenten_tagged`
 	- Arguments: first argument is a folder of json-files that need to be tagged (`kirjak_vs_mittekirjak_ettenten`); second argument is an empty folder for tagged output files (`kirjak_vs_mittekirjak_ettenten_tagged`).
 

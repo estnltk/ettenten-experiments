@@ -1,4 +1,6 @@
-#
+#   Script from https://github.com/estnltk/estnltk/tree/version_1.6/corpus_processing
+#   Some changes have been made in this version of script.
+
 #   Analyses JSON format data, adding layers of analyses up to the level 
 #   of morphological analysis (incl).
 #   Saves results as EstNLTK 1.6.x JSON export files (recommended), or 

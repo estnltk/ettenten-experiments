@@ -9,7 +9,7 @@ from collections import defaultdict
 all_summaries=[]
 true_category=[]
 
-with open('weblang_scores_csv.csv', newline='') as f:
+with open('weblang_scores.csv', newline='') as f:
     reader = csv.reader(f, delimiter=';', quoting=csv.QUOTE_NONE)
     headers=next(reader)
     #print(headers)

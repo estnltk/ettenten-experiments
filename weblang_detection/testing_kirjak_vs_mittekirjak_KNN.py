@@ -16,7 +16,7 @@ av_f1=[]
 
 vectors=[]
 
-with open('weblang_scores_csv.csv','r') as f:
+with open('weblang_scores.csv','r') as f:
     data=f.readlines()
 header, rest=data[0], data[1:]
 shuffle(rest)

@@ -1,4 +1,4 @@
-# Script gives an overview of how many attributes of web language there are on average in two different categories (kirjak vs mittekirjak) 
+# Script gives an overview of how many features of web language there are on average in two different categories (kirjak vs mittekirjak) 
 
 from estnltk import Text
 import os

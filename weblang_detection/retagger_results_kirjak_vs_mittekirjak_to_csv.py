@@ -1,4 +1,4 @@
-# Output is a csv-file where all files with the total number of detected attributes are presented.
+# Output is a csv-file where all files with the total number of detected features are presented.
 
 from estnltk import Text
 import os
@@ -12,12 +12,12 @@ path = os.path.join(cwd, "kirjak_vs_mittekirjak_ettenten_tagged")
 
 weblang_tagger=ParagraphWebLanguageScoreRetagger()
 
-info_all=[] # all texts and their total scores of attributes 
+info_all=[] # all texts and their total scores of features 
 
 for file in os.listdir(path):
     file_location = os.path.join(path, file)
     if "json" in file_location:
-        info_files=defaultdict(list) # scores of attributes of paragraphs
+        info_files=defaultdict(list) # scores of features of paragraphs
         filename=file_location.split("\\")[-1]
         info_files["filename"]=[filename]
         text = json_to_text(file=file_location)

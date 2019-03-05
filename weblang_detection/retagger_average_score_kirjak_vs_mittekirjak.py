@@ -11,8 +11,8 @@ path = os.path.join(cwd, "kirjak_vs_mittekirjak_ettenten_tagged")
 
 weblang_tagger=ParagraphWebLanguageScoreRetagger(use_punct_reps=True)
 
-info_kirjak=defaultdict(int) # attributes in kirjak-files
-info_mittekirjak=defaultdict(int) # attributes in mittekirjak-files
+info_kirjak=defaultdict(int) # features in kirjak-files
+info_mittekirjak=defaultdict(int) # features in mittekirjak-files
 
 for file in os.listdir(path):
     file_location = os.path.join(path, file)

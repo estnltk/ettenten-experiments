@@ -16,6 +16,8 @@ av_f1=[]
 
 vectors=[]
 
+only_docs_agreement_3 = True # False - use all files; True - use files that were labelled exactly the same by 3 people
+
 with open('weblang_scores.csv','r') as f:
     data=f.readlines()
 header, rest=data[0], data[1:]
@@ -24,12 +26,23 @@ shuffle(rest)
 for i in rest:
     i=i.strip()
     i=i.split(";")
-    vectors.append(i[1:]) # results of 1 file
+    if only_docs_agreement_3 == False:
+        vectors.append(i[1:]) # results of 1 file
+    if only_docs_agreement_3 == True:
+        all_agreed=[]
+        with open('agreement_scores_kirjak_mittekirjak.csv', newline='') as f:
+            reader = csv.reader(f, delimiter=';', quoting=csv.QUOTE_NONE)
+            headers=next(reader)
+            for row in reader:
+                if row[1]=="3":
+                    all_agreed.append(row[0])
+        if i[0] in all_agreed:
+            vectors.append(i[1:]) # results of 1 file                 
     
 vectors=np.array(vectors)
 
 kfold_number=4
-k=3 #KNN
+k=7 #KNN
 method=cosine_distance
 #method=euclidean_distance
 
@@ -97,4 +110,3 @@ print("Average precision:",sum(av_prec) / 4)
 print("Average recall:",sum(av_rec) / 4)
 print("Average F1:",sum(av_f1) / 4)
 print("------------------------")
-

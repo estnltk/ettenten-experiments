@@ -39,7 +39,7 @@
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all features + word_count aswell).
 	
 *  `PCA.ipynb` -- Principal Component Analysis. 
-	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
+	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required for running the cells in the notebook -- file named `weblang_scores.csv`.
 
 
 

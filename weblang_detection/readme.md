@@ -14,7 +14,7 @@
 	- Command line: `python process_and_save_results.py kirjak_vs_mittekirjak_ettenten kirjak_vs_mittekirjak_ettenten_tagged`
 	- Arguments: first argument is a folder of json-files that need to be tagged (`kirjak_vs_mittekirjak_ettenten`); second argument is an empty folder for tagged output files (`kirjak_vs_mittekirjak_ettenten_tagged`).
 	
-* `paragraphweblanguagescoreretagger_tutorial` -- tutorial on how to use paragraphweblanguagescoreretagger.
+* `paragraphweblanguagescoreretagger_tutorial.ipynb` -- tutorial on how to use paragraphweblanguagescoreretagger.
 	- The output of script `process_and_save_results.py` is required for running the second example in the notebook -- folder named `kirjak_vs_mittekirjak_ettenten_tagged`.
 
 * `retagger_results_kirjak_vs_mittekirjak_to_csv.py` -- creates a csv-file `weblang_scores.csv`. In there all files with the total number of detected features are presented.
@@ -37,6 +37,9 @@
 	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
 	- If a variable *only_docs_agreement_3* is set to *True* in script, file named `agreement_scores_kirjak_mittekirjak.csv` is required. If True, only files that were given the same label by 3 persons (*kirjak* vs *mittekirjak*) are used.
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all features + word_count aswell).
+	
+*  `PCA.ipynb` -- Principal Component Analysis. 
+	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
 
 
 

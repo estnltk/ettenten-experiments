@@ -16,14 +16,14 @@
 	- Command line: `python process_and_save_results.py kirjak_vs_mittekirjak_ettenten kirjak_vs_mittekirjak_ettenten_tagged`
 	- Arguments: first argument is a folder of json-files that need to be tagged (`kirjak_vs_mittekirjak_ettenten`); second argument is an empty folder for tagged output files (`kirjak_vs_mittekirjak_ettenten_tagged`).
 
-* `retagger_average_score_kirjak_vs_mittekirjak.py` -- script gives an overview of how many features of web language there are on average in two different categories.
-	- Command line: `python retagger_average_score_kirjak_vs_mittekirjak.py`
-	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
-
 * `retagger_results_kirjak_vs_mittekirjak_to_csv.py` -- creates a csv-file `weblang_scores.csv`. In there all files with the total number of detected features are presented.
 	- Command line: `python retagger_results_kirjak_vs_mittekirjak_to_csv.py`
 	- Retagger `paragraphweblanguagescoreretagger.py` has to be accessible.
 	- The output of script `process_and_save_results.py` is required -- folder named `kirjak_vs_mittekirjak_ettenten_tagged`.
+	
+* `retagger_average_score_kirjak_vs_mittekirjak.py` -- script gives an overview of how many features of web language there are on average in two different categories.
+	- Command line: `python retagger_average_score_kirjak_vs_mittekirjak.py`
+	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
 
 * `testing_kirjak_vs_mittekirjak_whole_text_score.py` -- for testing purposes to find a threshold value - when files, based on their calculated whole text score, can automatically be labelled as *mittekirjak*.
 	- Command line: `python testing_kirjak_vs_mittekirjak_whole_text_score.py`

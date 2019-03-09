@@ -1,1 +1,1 @@
-## Experiments with the etTeTen corpus
+## Experiments with the etTenTen corpus

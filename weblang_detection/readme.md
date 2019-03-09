@@ -10,11 +10,12 @@
 
 * `paragraphweblanguagescoreretagger.py` -- retagger for detecting web language features in text. Web language features will be marked as attributes of the paragraphs layer.
 
-* `paragraphweblanguagescoreretagger_tutorial` -- tutorial on how to use paragraphweblanguagescoreretagger.
-
 * `process_and_save_results.py` -- script that takes json-files from a folder and adds to them layers required by paragraphweblanguagescoreretagger. Output is a folder with tagged json-files.
 	- Command line: `python process_and_save_results.py kirjak_vs_mittekirjak_ettenten kirjak_vs_mittekirjak_ettenten_tagged`
 	- Arguments: first argument is a folder of json-files that need to be tagged (`kirjak_vs_mittekirjak_ettenten`); second argument is an empty folder for tagged output files (`kirjak_vs_mittekirjak_ettenten_tagged`).
+	
+* `paragraphweblanguagescoreretagger_tutorial` -- tutorial on how to use paragraphweblanguagescoreretagger.
+	- The output of script `process_and_save_results.py` is required for running the second example in the notebook -- folder named `kirjak_vs_mittekirjak_ettenten_tagged`.
 
 * `retagger_results_kirjak_vs_mittekirjak_to_csv.py` -- creates a csv-file `weblang_scores.csv`. In there all files with the total number of detected features are presented.
 	- Command line: `python retagger_results_kirjak_vs_mittekirjak_to_csv.py`

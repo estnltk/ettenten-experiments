@@ -25,6 +25,8 @@
 * `retagger_average_score_kirjak_vs_mittekirjak.py` -- script gives an overview of how many features of web language there are on average in two different categories.
 	- Command line: `python retagger_average_score_kirjak_vs_mittekirjak.py`
 	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
+	
+* `agreement_scores_kirjak_mittekirjak.csv` -- csv-file where filenames are listed together with their agreement scores. Agreement score shows how many people agreed on the label that was given to a file. Maximum agreement score is 3. 
 
 * `testing_kirjak_vs_mittekirjak_whole_text_score.py` -- for testing purposes to find a threshold value - when files, based on their calculated whole text score, can automatically be labelled as *mittekirjak*.
 	- Command line: `python testing_kirjak_vs_mittekirjak_whole_text_score.py`
@@ -35,7 +37,7 @@
 * `testing_kirjak_vs_mittekirjak_KNN.py` -- for testing purposes to find a k-value for categorizing files as *kirjak/mittekirjak* by cosine / euclidean distance and KNN algorithm.
 	- Command line: `python testing_kirjak_vs_mittekirjak_KNN.py`
 	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
-	- If a variable *only_docs_agreement_3* is set to *True* in script, file named `agreement_scores_kirjak_mittekirjak.csv` is required. If True, only files that were given the same label by 3 persons (*kirjak* vs *mittekirjak*) are used.
+	- If a variable *only_docs_agreement_3* is set to *True* in script, file named `agreement_scores_kirjak_mittekirjak.csv` is required. If True, only files that were given the same label (*kirjak* vs *mittekirjak*) by 3 persons are used.
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all features + word_count aswell).
 	
 *  `PCA.ipynb` -- Principal Component Analysis. 

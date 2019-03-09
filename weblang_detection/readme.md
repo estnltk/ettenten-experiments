@@ -34,6 +34,7 @@
 * `testing_kirjak_vs_mittekirjak_KNN.py` -- for testing purposes to find a k-value for categorizing files as *kirjak/mittekirjak* by cosine / euclidean distance and KNN algorithm.
 	- Command line: `python testing_kirjak_vs_mittekirjak_KNN.py`
 	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required -- file named `weblang_scores.csv`.
+	- If a variable *only_docs_agreement_3* is set to True in script, file named `agreement_scores_kirjak_mittekirjak.csv` is required. If True, only files that were given the same label by 3 persons (*kirjak* vs *mittekirjak*) are used.
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all features + word_count aswell).
 
 

@@ -243,6 +243,8 @@ class ParagraphWebLanguageScoreRetagger(Retagger):
                                         count+=1 # such compound tokens are not counted as unknown words             
                                 if count !=0:
                                     attr_dict["unknown_words"] += 1
+                                if morph[0].start not in text.compound_tokens["start"] and not match2:
+                                    attr_dict["unknown_words"] += 1
                                         
             attr_dict["word_count"]=len(word_list)  
                     

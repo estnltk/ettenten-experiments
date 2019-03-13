@@ -40,8 +40,10 @@
 	- If a variable *only_docs_agreement_3* is set to *True* in script, file named `agreement_scores_kirjak_mittekirjak.csv` is required. If True, only files that were given the same label (*kirjak* vs *mittekirjak*) by 3 persons are used.
 	- Currently cosine distance seems to work better (with k-values of 3 or 5 and all features + word_count aswell).
 	
-*  `PCA.ipynb` -- Principal Component Analysis. 
+*  `PCA.ipynb` -- Principal Component Analysis of files from folder `ettenten kirjak_vs_mittekirjak_ettenten_tagged`. 
 	- The output of script `retagger_results_kirjak_vs_mittekirjak_to_csv.py` is required for running the cells in the notebook -- file named `weblang_scores.csv`.
 
+* `pca_coordinates.csv` -- PCA coordinates of all files (files from folder `ettenten kirjak_vs_mittekirjak_ettenten_tagged`). 
+	- For testing purposes -- possible to analyse, which files with a label of *mittekirjak* cannot be distinguished from files with a label of *kirjak* by the features that paragraphweblanguagescoreretagger detects.
 
 

@@ -10,7 +10,7 @@ from collections import defaultdict
 cwd = os.getcwd()
 path = os.path.join(cwd, "kirjak_vs_mittekirjak_ettenten_tagged") 
 
-weblang_tagger=ParagraphWebLanguageScoreRetagger()
+weblang_tagger=ParagraphWebLanguageScoreRetagger(use_punct_reps=True)
 
 info_all=[] # all texts and their total scores of features 
 

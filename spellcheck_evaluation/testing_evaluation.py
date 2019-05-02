@@ -36,7 +36,7 @@ for file in os.listdir(path):
                 if len(i)!=0 and len(i)!=1:
                     if i[-1]!="Punct":
                         spell_check=vm.spellcheck([i[0]], suggestions=True)
-                        if i[-1]!="Ok": # you can add here other tags to be left out from evaluation (to see how metrics change)
+                        if i[-1]!="Ok" and i[-1] != "Spell_Unknown" and i[-1] != "Spell_Unknown_Gen" and i[-1] != "Spell_Unknown_Part": # you can add here other tags to be left out from evaluation (to see how metrics change)
                             for item in spell_check:
                                 # TESTING HOW WELL SPELLER RECOGNIZES MISTAKES
                                 # If spelling is OK according to speller:

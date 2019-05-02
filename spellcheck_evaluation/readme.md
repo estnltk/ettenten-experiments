@@ -35,9 +35,9 @@
 			- _Punct_ -- punctuation
 			
 
-	- Command line: `python norm_corpus.py`. Folder named `ettenten-valik` with _cg_ files in it is required; folder named `ettenten-valik_tsv` has to be created before running the script.
+	- Command line: `python norm_corpus.py`. Folder named `ettenten-valik` with _cg_ files in it is required; folder named `ettenten-valik_tsv` has to be created before running the script. `python-levenshtein` extension has to be installed (`pip install python-Levenshtein`).
 
-- `norm_corpus_jupyter.ipynb` -- previous code in jupyter notebook with source code of CG3AnnotationParser (in case there are problems with importing the parser).
+- `norm_corpus_jupyter.ipynb` -- previous code in jupyter notebook with source code of CG3AnnotationParser (in case there are problems with importing the parser). `python-levenshtein` extension has to be installed (`pip install python-Levenshtein`)
 
 - `testing_evaluation.py` -- evaluation of spell-checker on created corpus (how well are mistakes found and suggestions given).
 		

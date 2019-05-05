@@ -7,7 +7,7 @@ import re
 from estnltk.vabamorf.morf import synthesize
 from Levenshtein import distance
 import sys
-from estnltk.converters import CG3AnnotationParser
+from estnltk.converters.cg3_annotation_parser import CG3AnnotationParser
 
 morph_tagger = VabamorfTagger(guess=False,propername=False,disambiguate=False,phonetic=False)
 

@@ -17,7 +17,7 @@ new_path = os.path.join("ettenten-valik_tsv",'')
 
 cases={"abes":"ab","adit":"adt","gen":"g","nom":"n","part":"p","term":"ter"}
 
-new_analyses={"süüa-juua":"süüa-juua"+"\t"+"süüa-juua"+"\t"+"Ok","L-S":"L-S"+"\t"+"L-S"+"\t"+"Name",
+manual_corrections={"süüa-juua":"süüa-juua"+"\t"+"süüa-juua"+"\t"+"Ok","L-S":"L-S"+"\t"+"L-S"+"\t"+"Name",
               "New Yorgist":"New Yorgist"+"\t"+"New Yorgist"+"\t"+"Name","20D/30D":"20D/30D"+"\t"+"20D/30D"+"\t"+"Abbrev_Num",
              "mp3-dega":"mp3-dega"+"\t"+"mp3-dega"+"\t"+"Abbrev_Num",
              "mp3-de":"mp3-de"+"\t"+"mp3-de"+"\t"+"Abbrev_Num",
@@ -165,9 +165,9 @@ def use_edit_distance(analysis, form, i, i2, mult_anal):
             lines_list.append(info)
         else:
             if mult_anal==False:
-                if_in_dict(i)
+                add_manual_correction_if_available(i)
 
-def if_in_dict(i): 
+def add_manual_correction_if_available(i): 
     if i in new_analyses.keys():
         info=new_analyses[i]
         lines_list.append(info)
@@ -185,7 +185,7 @@ def synt(i,analysis,tag,mult_anal):
             lines_list.append(info)
         else:
             if mult_anal==False:
-                if_in_dict(i)
+                add_manual_correction_if_available(i)
     else:
         form=analysis["number"][0] + " " + analysis["case"][0]
         new_word=synthesize(analysis["lemma"], form=form)
@@ -194,7 +194,7 @@ def synt(i,analysis,tag,mult_anal):
             lines_list.append(info)
         else:
             if mult_anal==False:
-                if_in_dict(i)
+                add_manual_correction_if_available(i)
 
 
 def verb_check(morph_root,analysis,tagged_i,i,mult_anal):
@@ -222,7 +222,7 @@ def verb_check(morph_root,analysis,tagged_i,i,mult_anal):
                         lines_list.append(info)
             else:
                 if mult_anal==False:
-                    if_in_dict(i)        
+                    add_manual_correction_if_available(i)        
      
         else: 
             if analysis["ending"]=="0" and "tense" in analysis.keys() and "polarity" in analysis.keys() and "pres" in analysis["tense"] and "neg" in analysis["polarity"]:
@@ -261,10 +261,10 @@ def verb_check(morph_root,analysis,tagged_i,i,mult_anal):
                         lines_list.append(info)
                 else:
                     if mult_anal==False:
-                        if_in_dict(i)        
+                        add_manual_correction_if_available(i)        
             else:
                 if mult_anal==False:
-                    if_in_dict(i)
+                    add_manual_correction_if_available(i)
                 
             
 def others_check(morph,analysis,tagged_i,i,mult_anal):
@@ -302,7 +302,7 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                     lines_list.append(info) 
             else:
                 if mult_anal==False:
-                    if_in_dict(i)
+                    add_manual_correction_if_available(i)
              
         elif ("subtype" in analysis.keys() and "prop" in analysis["subtype"]) or ((analysis["partofspeech"]=="Y" or analysis["partofspeech"]=="S") and re.search("\d", analysis["lemma"])):
             if (("case" not in analysis.keys()) or ("case" in analysis.keys() and "nom" in analysis["case"]) and "sg" in analysis["number"]):
@@ -318,7 +318,7 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                     lines_list.append(info) 
                 else:
                     if mult_anal==False:
-                        if_in_dict(i)               
+                        add_manual_correction_if_available(i)               
         
         elif analysis["partofspeech"]=="Y" and not re.search("\d", analysis["lemma"]):
             if ("case" in analysis.keys() and "nom" in analysis["case"] and "sg" in analysis["number"]) or ("case" not in analysis.keys()):
@@ -335,10 +335,10 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                         lines_list.append(info)
                     else:
                         if mult_anal==False:
-                            if_in_dict(i)                
+                            add_manual_correction_if_available(i)                
                 else:
                     if mult_anal==False:
-                        if_in_dict(i)        
+                        add_manual_correction_if_available(i)        
                     
         else:
             if morph.lemma!=None and analysis["lemma"].lower() == morph.lemma.lower():
@@ -378,10 +378,10 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                                         lines_list.append(info)
                                 else:
                                     if mult_anal==False:
-                                        if_in_dict(i)
+                                        add_manual_correction_if_available(i)
                         else:
                             if mult_anal==False:
-                                if_in_dict(i)
+                                add_manual_correction_if_available(i)
                             
             else:
                 if "partofspeech" in analysis.keys() and (analysis["partofspeech"]=="J" or analysis["partofspeech"]=="K" or analysis["partofspeech"]=="D" or analysis["partofspeech"]=="B"):
@@ -414,7 +414,7 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                                     lines_list.append(info)
                             else:
                                 if mult_anal==False:
-                                    if_in_dict(i)
+                                    add_manual_correction_if_available(i)
                     
                 elif "case" in analysis.keys():
                     if analysis["case"][0] in cases.keys():
@@ -432,7 +432,7 @@ def others_check(morph,analysis,tagged_i,i,mult_anal):
                         lines_list.append(info)
                     else:
                         if mult_anal==False:
-                            if_in_dict(i)
+                            add_manual_correction_if_available(i)
                         
                             
 
@@ -487,14 +487,14 @@ for file in os.listdir(path):
                                         if length==len(lines_list):
                                             verb_check(listike,analysis,tagged_i,i,mult_anal=True)
                                     if length==len(lines_list):
-                                        if_in_dict(i)
+                                        add_manual_correction_if_available(i)
                                 else:
                                     length=len(lines_list)
                                     for listike in i2:
                                         if length==len(lines_list):
                                             others_check(listike,analysis,tagged_i,i,mult_anal=True)
                                     if length==len(lines_list):
-                                        if_in_dict(i)
+                                        add_manual_correction_if_available(i)
                         else: # if auto.morph analysis == None
                             if analysis["partofspeech"]=="V":
                                 verb_check(i2[0],analysis,tagged_i,i,mult_anal=False)

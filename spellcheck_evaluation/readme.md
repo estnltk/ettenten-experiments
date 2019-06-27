@@ -2,11 +2,21 @@
 
 ---
 
-## Resources and scripts
+This folder contains scripts for measuring performance of the Vabamorf's spellchecker on normalizing words of etTenTen documents.
+
+We use 2 ways for measuring performance.
+_First_, we use manually corrected morphological annotations to automatically synthesize correct forms for misspelled words, and then measure how well the  spellchecker can detect mistakes and provide suggestions for correct word forms.
+_Second_, we provide an indirect evaluation of Vabamorf's spellchecker via measuring improvements that it provides to the quality of morphological analysis if analyses of misspelled words are augmented with analyses (of words) suggested by the spellchecker. 
+
+## I. Evaluating spellchecker on synthesized word forms
+
+### Resources and scripts
 
  * `[ettenten-valik]` -- a subset of the [etTenTen 2013 corpus](https://metashare.ut.ee/repository/browse/ettenten-korpus-toortekst/b564ca760de111e6a6e4005056b4002419cacec839ad4b7a93c3f7c45a97c55f) in which documents have been analysed morphologically + syntactically and later been manually corrected. Documents are in _cg_ format.
  
 	Documents of the corpus are available in the repository [https://github.com/EstSyntax/EDT/tree/master/ettenten-valik](https://github.com/EstSyntax/EDT/tree/master/ettenten-valik).
+
+	( Note: this corpus was first introduced by [Särg et al. \(2018\)](https://link.springer.com/chapter/10.1007/978-3-030-00794-2_18) and it is also known as _Estonian Web Treebank_ ) 
 
 * `norm_corpus.py` -- script that takes files in _cg_ format from a folder  `[ettenten-valik]` and as a output saves the files in a new _tsv_ format with added information into an existing folder `[ettenten-valik_tsv]`.
 	
@@ -47,3 +57,13 @@
 Corpus of _tsv_ files is created automatically, meaning it may contain several mistakes regarding the normalized forms or given tags. The original morphological analysis of words didn't include normalized forms, thus many of these forms where automatically synthesized based on the given morphological information. These new normalized forms were not manually checked. 
 	
 Although there are 15 different tags used in this corpus, these shouldn't really be used for gathering information about the number of occurrences in different categories. Several words may suit to more than one category, thus the given number of occurrences in one category doesn't often contain all of such cases. But in evaluation tags are still good to use in terms of how spell-checker works with different type of words in general.
+
+
+
+## II. Evaluation of spellchecker via morphological analysis
+
+### Resources and scripts
+
+ * `ewtb_ud_utils.py` -- module that contains utilities for processing [UD format Estonian Web TreeBank (EWTB)](https://github.com/UniversalDependencies/UD_Estonian-EWT/) corpus. Includes utilities for: **a)** loading corpus files with annotation post-corrections that improve comparability to Vabamorf's annotations; **b)** aligning UD's morphological annotations to Vabamorf's annotations; **c)** finding differences between Vabamorf's morph_analysis layer and morphological annotations in EWTB's syntax layer; **d)** getting summary statistics about matches and mismatches between Vabamorf's annotations and UD annotations;
+
+ * `spellchecker_evaluation_via_morph.ipynb` -- the notebook containing experiment description, source code and results. The experiment evaluates how spellchecker's suggestions can improve the quality of morphological analysis on the EWTB corpus. Also, the notebook shows how methods and classes from the module `ewtb_ud_utils.py` can be used;

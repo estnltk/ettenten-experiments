@@ -606,6 +606,7 @@ class VM2EWTBMorphDiffTagger(Tagger):
         mismatching_proper_names = 0
         mismatching_punct        = 0
         mismatching_symbols      = 0
+        words_ambiguities = []
         for wid, morph_word in enumerate( vm_layer ):
             # Get comparable records
             ud_word = ud_layer[wid]
@@ -613,6 +614,7 @@ class VM2EWTBMorphDiffTagger(Tagger):
             vm_word_records = morph_word.to_records()
             if isinstance( ud_word_records, dict ):
                 ud_word_records = [ ud_word_records ]
+            words_ambiguities.append( len(vm_word_records) )
             # Get the result
             matches_table, has_full_match = \
                 self.compare_function( ud_word_records, vm_word_records )
@@ -620,7 +622,7 @@ class VM2EWTBMorphDiffTagger(Tagger):
                 matching_items += 1
             if not has_full_match:
                 for mid, [root_match, pos_match, form_match] in enumerate(matches_table):
-                    vm_morph_annotation = morph_word[mid]
+                    vm_morph_annotation = morph_word.annotations[mid]
                     attributes = {
                         'root_match': root_match, 
                         'pos_match':  pos_match, 
@@ -650,6 +652,8 @@ class VM2EWTBMorphDiffTagger(Tagger):
         layer.meta['words_total'] = comparable_items
         layer.meta['matching_words'] = matching_items
         layer.meta['mismatching_words'] = comparable_items - matching_items
+        layer.meta['avg_variants_per_word'] = sum(words_ambiguities) / len(words_ambiguities)
+        layer.meta['ambiguous_words'] = len([amb for amb in words_ambiguities if amb > 1])
         if self.count_mismatch_details:
             layer.meta['mismatching_propn_words'] = mismatching_proper_names
             layer.meta['mismatching_punct_words'] = mismatching_punct
@@ -674,6 +678,8 @@ def get_diff_statistics( texts_list, diff_layer, leave_out_udpos=[], ascii_forma
     mismatches_stats = defaultdict(int)
     mismatches_total = 0
     words_total      = 0
+    ambiguous_words  = 0
+    macro_avg_variants_per_word = []
     for text in texts_list:
         assert diff_layer in text.layers.keys(), \
                '(!) Text {!r} is missing the layer {!r}.'.format( text, diff_layer )
@@ -710,12 +716,17 @@ def get_diff_statistics( texts_list, diff_layer, leave_out_udpos=[], ascii_forma
             mismatches_stats[maximal_mismatch_str] += 1
             mismatches_in_text += 1
         mismatches_total += mismatches_in_text
-        words_total += text[diff_layer].meta['words_total']
+        words_total      += text[diff_layer].meta['words_total']
+        ambiguous_words  += text[diff_layer].meta['ambiguous_words']
+        macro_avg_variants_per_word.append( text[diff_layer].meta['avg_variants_per_word'] )
+    from statistics import mean as py_mean
     results = {
        'text_objects' : len(texts_list),
        'words_total'  : words_total,
        'mismatches_total' : mismatches_total,
        'mismatches_statistics' : mismatches_stats,
+       'ambiguous_total' : ambiguous_words,
+       'avg_analyses_per_word': round( py_mean(macro_avg_variants_per_word), 2)
     }
     # Add percentages
     def percent_str(x, all):
@@ -725,11 +736,12 @@ def get_diff_statistics( texts_list, diff_layer, leave_out_udpos=[], ascii_forma
     for key in mismatches_stats.keys():
         mismatches_stats_per[key] = percent_str(mismatches_stats[key], mismatches_total)
     results['mismatches_statistics_%'] = mismatches_stats_per
+    results['ambiguous_words_%'] = percent_str(ambiguous_words, words_total)
     return results
 
 
 
-def diff_statistics_html_table( texts_list, diff_layer, leave_out_udpos=[], display=True ):
+def diff_statistics_html_table( texts_list, diff_layer, leave_out_udpos=[], display=True, show_ambiguity=False ):
     '''Finds detailed difference statistics (uses method get_diff_statistics()) and outputs results as an HTML table.'''
     results = get_diff_statistics( texts_list, diff_layer, leave_out_udpos=leave_out_udpos, ascii_format=False )
     import pandas
@@ -747,17 +759,28 @@ def diff_statistics_html_table( texts_list, diff_layer, leave_out_udpos=[], disp
                                      index=[0])
     table = overall_table.to_html(index=False)
     table = ['<h4>Summary of morphological analyses matching</h4>', table]
-    # 2) Get detailed statistics
-    mm_labels = sorted( list(results['mismatches_statistics'].keys()), \
-                        key=results['mismatches_statistics'].get, \
-                        reverse=True )
-    mm_values = [ ( str(results['mismatches_statistics'][label]),str(results['mismatches_statistics_%'][label]) ) for label in mm_labels ]
-    missed_table = pandas.DataFrame(mm_values, index=mm_labels)
-    #missed_table.style.set_properties(**{'text-align': 'left'})
-    missed_table.style.set_table_styles(
-          [{"selector": "th", "props": [("text-align", "left")]}]
-    )
-    missed_table = missed_table.to_html(header=False)
-    table.extend( ('<h4>Details on mismatches</h4>', missed_table,) )
+    if show_ambiguity:
+        # 2) Get detailed ambiguity statistics
+        amb_results = {'ambiguous_words':     str(results['ambiguous_total']),
+                       'ambiguous_%':         str(results['ambiguous_words_%']),
+                       'avg_analyses_per_word': str(results['avg_analyses_per_word'])
+        }
+        amb_table = pandas.DataFrame(data=amb_results,
+                                     columns=['ambiguous_words','ambiguous_%', 'avg_analyses_per_word'],
+                                     index=[0])
+        table.extend( ('<h4>Details on ambiguity</h4>', amb_table.to_html(index=False),) )
+    else:
+        # 2) Get detailed mismatch statistics
+        mm_labels = sorted( list(results['mismatches_statistics'].keys()), \
+                            key=results['mismatches_statistics'].get, \
+                            reverse=True )
+        mm_values = [ ( str(results['mismatches_statistics'][label]),str(results['mismatches_statistics_%'][label]) ) for label in mm_labels ]
+        missed_table = pandas.DataFrame(mm_values, index=mm_labels)
+        #missed_table.style.set_properties(**{'text-align': 'left'})
+        missed_table.style.set_table_styles(
+              [{"selector": "th", "props": [("text-align", "left")]}]
+        )
+        missed_table = missed_table.to_html(header=False)
+        table.extend( ('<h4>Details on mismatches</h4>', missed_table,) )
     return '\n'.join(table) if not display else display(HTML('\n'.join(table)))
 

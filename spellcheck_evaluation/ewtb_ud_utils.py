@@ -35,14 +35,15 @@ import re
 from collections import OrderedDict
 from collections import defaultdict
 
-from estnltk.text import Layer, EnvelopingSpan, Span, Text
-from estnltk.taggers import Tagger
+from estnltk.text import Layer, Text
+from estnltk.taggers import Tagger, Retagger
 from estnltk.taggers import CompoundTokenTagger
-from estnltk.layer_operations import rebase, flatten
+from estnltk.layer.annotation import Annotation
+
 from estnltk.converters.conll_importer import conll_to_text
 
 # ===========================================================================
-#   Importing from Text objects from EWTB corpus
+#   Importing Text objects from EWTB corpus
 #   (Note: this operates on the UD version of the corpus)
 # ===========================================================================
 
@@ -132,26 +133,37 @@ class EWTBCorrectionsRewriter:
         return record
 
 
+class EWTBCorrectionsRetagger(Retagger):
+    '''Retagger that applies EWTBCorrectionsRewriter.'''
+    conf_param = ['rewriter']
+
+    def __init__(self, layer_name):
+        self.input_layers = [layer_name]
+        self.output_layer = layer_name
+        self.output_attributes = []
+        self.rewriter = EWTBCorrectionsRewriter()
+    
+    def _change_layer(self, text, layers, status):
+        layer = layers[self.output_layer]
+        layer_attribs = layer.attributes
+        for span in layer:
+            records = span.to_records(with_text=True)
+            if isinstance(records, dict):
+                records = [ records ]
+            span.clear_annotations()
+            for record in records:
+                self.rewriter.rewrite( record )
+                record = { k: record[k] for k in record.keys() if k in layer_attribs }
+                span.add_annotation(Annotation(span, **record))
+        return layer
+
+
 def load_EWTB_ud_file_with_corrections( fnm, annotation_layer, add_compound_tokens=True ):
     '''Loads EWTB corpus' ud file with post-corrections that improve comparability to VM's annotations. Returns the Text object. '''
     # Load conll annotations layer
-    temporary_layer_name = '__'+annotation_layer
-    text = conll_to_text(file = fnm, syntax_layer=temporary_layer_name)
+    text = conll_to_text(file = fnm, syntax_layer=annotation_layer)
     # Rewrite layer with postcorrections
-    input_layer = text[temporary_layer_name]
-    corrected_layer = input_layer.rewrite( source_attributes=input_layer.attributes+('text',),
-                                           target_attributes=input_layer.attributes,
-                                           rules = EWTBCorrectionsRewriter(),
-                                           name  = annotation_layer )
-    # Remove temporary layer
-    text[annotation_layer] = corrected_layer
-    if input_layer.parent == None:  # the parent is flat layer
-        # Remove annotation_layer's dependecy to temporary_layer
-        flat_annotations = flatten(text[annotation_layer], annotation_layer)
-        # Remove the temporary layer (and its child layer)
-        delattr(text, temporary_layer_name)
-        # Put back the flat layer
-        text[annotation_layer] = flat_annotations
+    EWTBCorrectionsRetagger(layer_name=annotation_layer).retag( text )
     # Add compound tokens layer (if required)
     if add_compound_tokens and 'compound_tokens' not in text.layers.keys():
         add_empty_compound_tokens_layer( text )
@@ -165,7 +177,7 @@ def add_empty_compound_tokens_layer( text ):
                  attributes=CompoundTokenTagger.output_attributes, \
                  text_object=text,\
                  ambiguous=False)
-    text[compound_tokens.name] = compound_tokens
+    text.add_layer(compound_tokens)
 
 
 # ===========================================================================

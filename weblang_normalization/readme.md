@@ -17,6 +17,6 @@
 	- 2nd column *sentence*: example sentences from where the problematic forms were found.
 	- 3rd column *filename*: filenames of the files consisting the example sentences. 
  
- NB! All these possible word pairs have been created automatically, thus there may also be incorrect matches! (e.g. ['OK-mõni-msni'], ['OK-öine-nine'])
+ 	NB! All these possible word pairs have been created automatically, thus there may also be incorrect matches! (e.g. ['OK-mõni-msni'], ['OK-öine-nine'])
 
 * ..

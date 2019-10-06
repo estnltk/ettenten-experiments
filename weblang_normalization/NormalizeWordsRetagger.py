@@ -77,7 +77,8 @@ class NormalizeWordsRetagger(Retagger):
                             form_to_use=splitted_form_to_use[0] # e.g. prr
                             outcome=splitted_outcome[0] # e.g. original prrr
 
-                        if len(set(without_recurrent_letters(outcome))) in [2,3]: # certain shorter forms get possible other alternatives
+                        if (len(set(without_recurrent_letters(outcome))) in [2,3]) or \
+                        (len(set(without_recurrent_letters(outcome))) in [1,2,3] and outcome_modif!=0): # certain shorter forms get possible other alternatives
                             # if max 3 different letters in word: new alternative form: e.g. "ma" (orig: "maaaa", first norm_form: "maa") 
                             new_form=re.sub(r"([a-zšžõäöüA-ZÜÕÄÖŠŽ])\1{1,}", r"\1", form_to_use)
                             # if max 2 different letters in word: new alternative form: e.g. "krr" (orig: "krrrr", first norm_form: "kr")
@@ -89,16 +90,18 @@ class NormalizeWordsRetagger(Retagger):
                                 if (len(outcome)<5 or len(set(without_recurrent_letters(outcome)))==2) \
                                 and new_form!=outcome and len(new_form)<len(outcome): 
                                     forms_to_add.append(new_form)
+                            
                             else: # words with "-", e.g. "prrrr-ga"
                                 if (new_form!=outcome_modif[0][0] and len(new_form)<len(outcome_modif[0][0])) or \
                                     (len(set(without_recurrent_letters(outcome)))==1):
                                     if outcome not in dict_of_other_forms:
                                         forms_to_add.append(new_form+"-"+outcome_modif[0][1])
                                     else:
+                                        # special alternative forms from dict, e.g. w - www-le
                                         forms_to_add.append(dict_of_other_forms[outcome]+"-"+outcome_modif[0][1])
                                         
                         # special alternative forms from dict, e.g. w - www
-                        if outcome in dict_of_other_forms: 
+                        if len(outcome_modif)==0 and outcome in dict_of_other_forms: 
                             forms_to_add.append(dict_of_other_forms[outcome])
 
                         # roman numeral, e.g. "xii"/"Xii" get "XII" as an alternative
@@ -190,7 +193,7 @@ class NormalizeWordsRetagger(Retagger):
                     return None
                 # words like Mmm, Ooo, Eee etc to lowercase
                 if len(speller_info["text"])>1 and len(set(without_recurrent_letters(speller_info["text"]))) == 1 \
-                and speller_info["text"][0].isupper() and speller_info["text"][1:].islower(): s
+                and speller_info["text"][0].isupper() and speller_info["text"][1:].islower(): 
                     speller_info["text"]=speller_info["text"].lower()
 
                 # if SPELLING==TRUE

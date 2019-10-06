@@ -61,8 +61,8 @@ class NormalizeWordsRetagger(Retagger):
                         outcome=outcome.lower()
                     elif form_to_use[0].isupper() and outcome[0].islower():
                         outcome=outcome.capitalize()
-                    # normalized form is added if the original word contains more than 2 letter reps  
-                    if re.search(r"([a-zšžõäöü])\1{2,}",  form_to_use.lower()) !=None:
+                    # normalized form is added if the original word contains more than 2 letter reps or repetitive chunks 
+                    if re.search(r"([a-zšžõäöü])\1{2,}",  form_to_use.lower()) !=None or find_repeats(form_to_use.lower())!=None:
                         forms_to_add.append(outcome)
 
                         wo_repeats=without_recurrent_letters(outcome)

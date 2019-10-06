@@ -89,9 +89,6 @@ class NormalizeWordsRetagger(Retagger):
                                 if (len(outcome)<5 or len(set(without_recurrent_letters(outcome)))==2) \
                                 and new_form!=outcome and len(new_form)<len(outcome): 
                                     forms_to_add.append(new_form)
-                                # special alternative forms from dict, e.g. w - www
-                                if outcome in dict_of_other_forms: 
-                                    forms_to_add.append(dict_of_other_forms[outcome])
                             else: # words with "-", e.g. "prrrr-ga"
                                 if (new_form!=outcome_modif[0][0] and len(new_form)<len(outcome_modif[0][0])) or \
                                     (len(set(without_recurrent_letters(outcome)))==1):
@@ -99,6 +96,10 @@ class NormalizeWordsRetagger(Retagger):
                                         forms_to_add.append(new_form+"-"+outcome_modif[0][1])
                                     else:
                                         forms_to_add.append(dict_of_other_forms[outcome]+"-"+outcome_modif[0][1])
+                                        
+                        # special alternative forms from dict, e.g. w - www
+                        if outcome in dict_of_other_forms: 
+                            forms_to_add.append(dict_of_other_forms[outcome])
 
                         # roman numeral, e.g. "xii"/"Xii" get "XII" as an alternative
                         if (all(c in ["i","v","x","l","c","d","m"] for c in form_to_use)==True) or \

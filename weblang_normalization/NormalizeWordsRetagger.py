@@ -8,7 +8,7 @@ from estnltk.taggers.morph_analysis.proxy import MorphAnalyzedToken
 import nltk
 
 class NormalizeWordsRetagger(Retagger):
-    """Retagger for adding normalized forms as attributes of words layer for words used in non-canonical texts."""
+    """Retagger for adding normalized forms as attributes of words layer for words of non-standard varieties of Estonian."""
     
     conf_param = ["use_letter_reps", "use_diacritics_fixes", "use_diacritics_fixes_1", "use_diacritics_fixes_2", 
                  "use_diacritics_fixes_3"]
@@ -19,8 +19,8 @@ class NormalizeWordsRetagger(Retagger):
                  use_letter_reps=True,
                  use_diacritics_fixes=True,
                  use_diacritics_fixes_1=True,
-                 use_diacritics_fixes_2=True,
-                 use_diacritics_fixes_3=True):
+                 use_diacritics_fixes_2=False,
+                 use_diacritics_fixes_3=False):
 
         self.use_letter_reps = use_letter_reps
         self.use_diacritics_fixes = use_diacritics_fixes
@@ -61,7 +61,7 @@ class NormalizeWordsRetagger(Retagger):
                         outcome=outcome.lower()
                     elif form_to_use[0].isupper() and outcome[0].islower():
                         outcome=outcome.capitalize()
-                    # normalized form is added if the original word contains more than 2 letter reps or repetitive chunks 
+                    # normalized form is added if the original word contains more than 2 letter reps  
                     if re.search(r"([a-zšžõäöü])\1{2,}",  form_to_use.lower()) !=None or find_repeats(form_to_use.lower())!=None:
                         forms_to_add.append(outcome)
 
@@ -97,7 +97,6 @@ class NormalizeWordsRetagger(Retagger):
                                     if outcome not in dict_of_other_forms:
                                         forms_to_add.append(new_form+"-"+outcome_modif[0][1])
                                     else:
-                                        # special alternative forms from dict, e.g. w - www-le
                                         forms_to_add.append(dict_of_other_forms[outcome]+"-"+outcome_modif[0][1])
                                         
                         # special alternative forms from dict, e.g. w - www

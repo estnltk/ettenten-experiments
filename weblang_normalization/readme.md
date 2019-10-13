@@ -19,4 +19,7 @@
  
  	NB! All these possible word pairs have been created automatically, thus there may also be incorrect matches! (e.g. ['OK-mõni-msni'], ['OK-öine-nine'])
 
-* ..
+* `particles_userdict.csv` -- csv-file that gives correct morphological analyses for particles (e.g. *vä*, *lol*, *hihi*) with the help of UserDictTagger. File consists of particles and their new correct analyses (POS-tag - B).
+
+* `NormalizeWordsRetagger_tutorial.ipynb` -- tutorial on how to use NormalizeWordsRetagger.
+    - File named `particles_userdict.csv` is required for running the third example in the notebook.

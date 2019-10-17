@@ -15,8 +15,16 @@
 #   * VM2EWTBMorphDiffTagger
 #          Finds differences between Vabamorf's morph analysis layer and EWTB's 
 #          morph analysis (ud_syntax) layer.
-#          By deafult, uses align_records() for comparing annotations.
-#          Outputs differences as a layer.
+#          The output layer contains only words that have mismatching morphological 
+#          annotations (excluding words with matching annotations).
+#          By default, uses align_records() for comparing annotations.
+#
+#   * VM2UDMorphFullDiffTagger
+#          Annotates the full comparison between Vabamorf's morph analysis layer 
+#          and ud_syntax morph analysis layer.
+#          The output layer contains comparison info about all words (including both 
+#          words with matching and mismatching morphological annotations).
+#          By default, uses align_records() for comparing annotations.
 #
 #   * get_diff_statistics(...):
 #          Summarizes information about morphological annotation mismatches 

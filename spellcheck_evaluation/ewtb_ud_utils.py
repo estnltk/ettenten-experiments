@@ -563,8 +563,9 @@ def is_form_match( ud_word_record, vm_word_record ):
 # ===========================================================================
 
 class VM2EWTBMorphDiffTagger(Tagger):
-    """Finds differences between Vabamorf's morph analysis layer and EWTB's morph analysis (ud_syntax) layer."""
-    
+    """Finds differences between Vabamorf's morph analysis layer and EWTB's morph analysis (ud_syntax) layer.
+       The output layer contains only words that have mismatching morphological annotations.
+    """
     conf_param = ['vm_morph_layer', 'ud_syntax_layer', 'compare_function', 
                   'count_mismatch_details', 'show_lemmas', 'show_postags', 'show_forms']
     output_attributes = ('root_match', 'pos_match', 'form_match')
@@ -671,6 +672,100 @@ class VM2EWTBMorphDiffTagger(Tagger):
             layer.meta['mismatching_punct_words'] = mismatching_punct
             layer.meta['mismatching_symb_words']  = mismatching_symbols
         return layer
+
+
+
+class VM2UDMorphFullDiffTagger(Tagger):
+    """Annotates the full comparison between Vabamorf's morph analysis layer and ud_syntax morph analysis layer.
+       The output layer contains comparison info about all words (including both words with matching and 
+       mismatching morphological annotations).
+    """
+    conf_param = ['vm_morph_layer', 'ud_syntax_layer', 'compare_function', 'count_mismatch_details']
+    output_attributes = ('annotation_id', 'root_match', 'pos_match', 'form_match', 'full_match')
+    
+    def __init__(self,
+                 vm_morph_layer: str,
+                 ud_syntax_layer: str,
+                 output_layer: str,
+                 compare_function = align_records,
+                 count_mismatch_details: bool = True):
+         self.input_layers = [vm_morph_layer, ud_syntax_layer]
+         self.vm_morph_layer  = vm_morph_layer
+         self.ud_syntax_layer = ud_syntax_layer
+         self.output_layer = output_layer
+         self.compare_function = compare_function
+         self.count_mismatch_details = False
+         if count_mismatch_details:
+             self.count_mismatch_details = True
+
+
+    def _make_layer(self, text, layers, status):
+        vm_layer = layers[ self.vm_morph_layer  ]
+        ud_layer = layers[ self.ud_syntax_layer ]
+        assert vm_layer.text_object is ud_layer.text_object
+        assert len(vm_layer) == len(ud_layer), \
+                '(!) Layers contain unequal number of elements: {} vs {}'.format( len(vm_layer), len(ud_layer) )
+        layer = Layer(
+            name=self.output_layer,
+            parent=self.vm_morph_layer,
+            attributes=self.output_attributes,
+            text_object=vm_layer.text_object,
+            ambiguous=True
+            )
+        comparable_items = 0
+        matching_items   = 0
+        mismatching_proper_names = 0
+        mismatching_punct        = 0
+        mismatching_symbols      = 0
+        words_ambiguities = []
+        for wid, morph_word in enumerate( vm_layer ):
+            # Get comparable records
+            ud_word = ud_layer[wid]
+            ud_word_records = ud_word.to_records()
+            vm_word_records = morph_word.to_records()
+            if isinstance( ud_word_records, dict ):
+                ud_word_records = [ ud_word_records ]
+            words_ambiguities.append( len(vm_word_records) )
+            # Get the result
+            matches_table, has_full_match = \
+                self.compare_function( ud_word_records, vm_word_records )
+            if has_full_match:
+                matching_items += 1
+            for mid, [ root_match, pos_match, form_match ] in enumerate( matches_table ):
+                vm_morph_annotation = morph_word.annotations[mid]
+                attributes = {
+                    # because annotations is a set, we have to add 'annotation_id' in
+                    # order to keep comparisions of different analyses distinct
+                    'annotation_id' : mid,         
+                    'root_match': root_match,      
+                    'pos_match':  pos_match,       
+                    'form_match': form_match,      
+                    'full_match': has_full_match,  
+                }
+                layer.add_annotation(vm_morph_annotation.span, **attributes)
+            # Record type of mismatch
+            if not has_full_match:
+                if self.count_mismatch_details:
+                    xpostag = ud_word_records[0]['xpostag']
+                    upostag = ud_word_records[0]['upostag']
+                    if upostag == 'PROPN':
+                        mismatching_proper_names += 1
+                    if upostag == 'PUNCT':
+                        mismatching_punct += 1
+                    if upostag == 'SYM':
+                        mismatching_symbols += 1
+            comparable_items += 1
+        layer.meta['words_total'] = comparable_items
+        layer.meta['matching_words'] = matching_items
+        layer.meta['mismatching_words'] = comparable_items - matching_items
+        layer.meta['avg_variants_per_word'] = sum(words_ambiguities) / len(words_ambiguities)
+        layer.meta['ambiguous_words'] = len([amb for amb in words_ambiguities if amb > 1])
+        if self.count_mismatch_details:
+            layer.meta['mismatching_propn_words'] = mismatching_proper_names
+            layer.meta['mismatching_punct_words'] = mismatching_punct
+            layer.meta['mismatching_symb_words']  = mismatching_symbols
+        return layer
+
 
 
 # ===========================================================================

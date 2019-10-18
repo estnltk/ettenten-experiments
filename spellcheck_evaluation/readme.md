@@ -6,7 +6,7 @@ This folder contains scripts for measuring performance of the Vabamorf's spellch
 
 We use 2 ways for measuring performance.
 _First_, we use manually corrected morphological annotations to automatically synthesize correct forms for misspelled words, and then measure how well the  spellchecker can detect mistakes and provide suggestions for correct word forms.
-_Second_, we provide an indirect evaluation of Vabamorf's spellchecker via measuring improvements that it provides to the quality of morphological analysis if analyses of misspelled words are augmented with analyses (of words) suggested by the spellchecker. 
+_Second_, we provide an indirect evaluation of Vabamorf's spellchecker via measuring improvements that it provides to the quality of morphological analysis and disambiguation if analyses of misspelled words are augmented with analyses (of words) suggested by the spellchecker. 
 
 ## I. Evaluating spellchecker on synthesized word forms
 
@@ -64,6 +64,10 @@ Although there are 15 different tags used in this corpus, these shouldn't really
 
 ### Resources and scripts
 
- * `ewtb_ud_utils.py` -- module that contains utilities for processing [UD format Estonian Web TreeBank (EWTB)](https://github.com/UniversalDependencies/UD_Estonian-EWT/) corpus. Includes utilities for: **a)** loading corpus files with annotation post-corrections that improve comparability to Vabamorf's annotations; **b)** aligning UD's morphological annotations to Vabamorf's annotations; **c)** finding differences between Vabamorf's morph_analysis layer and morphological annotations in EWTB's syntax layer; **d)** getting summary statistics about matches and mismatches between Vabamorf's annotations and UD annotations;
+ * `ewtb_ud_utils.py` -- module that contains utilities for processing [UD format Estonian Web TreeBank (EWTB)](https://github.com/UniversalDependencies/UD_Estonian-EWT/) corpus. Includes utilities for: **a)** loading corpus files with annotation post-corrections that improve comparability to Vabamorf's annotations; **b)** aligning UD's morphological annotations to Vabamorf's annotations; **c)** finding differences between Vabamorf's morph_analysis layer and morphological annotations in EWTB's syntax layer; **d)** getting summary statistics about matches and mismatches between Vabamorf's annotations and UD annotations, and summary statistics about the quality of morphological disambiguation;
 
- * `spellchecker_evaluation_via_morph.ipynb` -- the notebook containing experiment description, source code and results. The experiment evaluates how spellchecker's suggestions can improve the quality of morphological analysis on the EWTB corpus. Also, the notebook shows how methods and classes from the module `ewtb_ud_utils.py` can be used;
+ * [`spellchecker_eval_via_morph_analysis.ipynb`](spellchecker_eval_via_morph_analysis.ipynb) -- an experiment that evaluates how spellchecker's suggestions can improve the quality of _Vabamorf's morphological analysis_ (excluding disambiguation) on the EWTB corpus;
+
+ * [`spellchecker_eval_morph_disambiguation.ipynb`](spellchecker_eval_morph_disambiguation.ipynb) -- an experiment that evaluates how adding spellchecker's suggestions as new normalized words affects the quality of _Vabamorf's morphological disambiguation_ on the EWTB corpus;
+   
+    Both experiment notebooks also show how methods and classes from the module `ewtb_ud_utils.py` can be used;

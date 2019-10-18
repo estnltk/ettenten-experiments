@@ -899,3 +899,96 @@ def diff_statistics_html_table( texts_list, diff_layer, leave_out_udpos=[], disp
         table.extend( ('<h4>Details on mismatches</h4>', missed_table,) )
     return '\n'.join(table) if not display else display(HTML('\n'.join(table)))
 
+
+
+# ===========================================================================
+# ===========================================================================
+#   Custom functions for disambiguation evaluation & reporting
+# ===========================================================================
+# ===========================================================================
+
+def eval_disambiguation_of_all_words( texts, morph_0_diff_layer_name, 
+                                             morph_1_diff_layer_name,
+                                             morph_2_diff_layer_name ):
+    '''Evaluates the disambiguation quality (correctly vs incorrectly disambiguated) on all words of the corpus.
+       Prints out evaluation statistics.
+    '''
+    words_total = 0                  # total words (including words that cannot be aligned to UD morph)
+    correct_words_all = 0            # correct words (disambiguated + undisambiguated)
+    words_to_disambiguate = 0        # words needing disambiguation
+    words_disambiguated = 0          # words actually disambiguated
+    correctly_disambiguated = 0      # correct words (only disambiguated)
+    correct_analyses_total_after_disamb = 0
+    correct_analyses_total_before_disamb = 0
+    for text in texts:
+        morph_0_diff = text[morph_0_diff_layer_name]
+        morph_1_diff = text[morph_1_diff_layer_name]
+        morph_2_diff = text[morph_2_diff_layer_name]
+        assert len( morph_0_diff ) == len( morph_1_diff )
+        assert len( morph_1_diff ) == len( morph_2_diff )
+        for word_1, word_2, word_3 in zip(morph_0_diff, morph_1_diff, morph_2_diff):
+            if word_1.annotations[0]['full_match'] or word_2.annotations[0]['full_match']:
+                # Look only words that obtained a full match:
+                # 1) with the default morphological analysis, or
+                # 2) with the extended morphological analysis based on normalized word forms
+                correct_analyses_total_before_disamb += 1
+                if (len(word_1.annotations) > 1 or len(word_2.annotations) > 1):
+                    words_to_disambiguate += 1
+                    if len(word_3.annotations) == 1:
+                        words_disambiguated += 1
+                        if word_3.annotations[0]['full_match']:
+                            correctly_disambiguated += 1
+                    if word_3.annotations[0]['full_match']:
+                        correct_words_all += 1
+                if word_3.annotations[0]['full_match']:
+                    correct_analyses_total_after_disamb += 1
+        words_total += len( morph_0_diff )
+    print('='*80)
+    print( ' Words that needed disambiguation:               ', words_to_disambiguate, '/', words_total )
+    print( '   Incorrectly disambiguated:                    ', (words_disambiguated-correctly_disambiguated), '/', words_to_disambiguate, '   {:.02f}%'.format(((words_disambiguated-correctly_disambiguated)/words_to_disambiguate)*100.0) )
+    print( '   Correctly disambiguated:                      ', correctly_disambiguated, '/', words_to_disambiguate, '   {:.02f}%'.format((correctly_disambiguated/words_to_disambiguate)*100.0) )
+    print( '   Disambiguation attempts:                      ', words_disambiguated, '/', words_to_disambiguate, '   {:.02f}%'.format((words_disambiguated/words_to_disambiguate)*100.0) )
+    print()
+    print( '   Correct words (including undisambiguated):    ', correct_words_all, '/', words_to_disambiguate, '   {:.02f}%'.format((correct_words_all/words_to_disambiguate)*100.0) )
+    print('='*80)
+    print( ' VM words alignable to UD morph words (before disamb): ', correct_analyses_total_before_disamb,'/', words_total, '   {:.02f}%'.format((correct_analyses_total_before_disamb/words_total)*100.0) )
+    print( ' VM words alignable to UD morph words  (after disamb): ', correct_analyses_total_after_disamb,'/', words_total, '   {:.02f}%'.format((correct_analyses_total_after_disamb/words_total)*100.0) )
+
+
+from estnltk.taggers.morph_analysis.morf_common import _get_word_texts
+
+def eval_disambiguation_of_normalized_words( texts, normalized_words_layer, 
+                                                    morph_1_diff_layer_name,
+                                                    morph_2_diff_layer_name ):
+    '''Evaluates the disambiguation quality (correctly vs incorrectly disambiguated words) only on normalized words of the corpus.
+       Prints out evaluation statistics.
+    '''
+    words_total = 0
+    words_with_normalization = 0
+    words_with_normalization_aligned_before_disamb = 0
+    words_with_normalization_aligned_after_disamb  = 0
+    for text in texts:
+        norm_words   = text[normalized_words_layer]
+        morph_1_diff = text[morph_1_diff_layer_name]
+        morph_2_diff = text[morph_2_diff_layer_name]
+        assert len( morph_1_diff ) == len( norm_words )
+        assert len( morph_1_diff ) == len( morph_2_diff )
+        for norm_word, word_2, word_3 in zip(norm_words, morph_1_diff, morph_2_diff):
+            w_texts = _get_word_texts(norm_word)
+            if len(w_texts) > 1 or (len(w_texts) == 1 and w_texts[0] != norm_word.text):
+                words_with_normalization += 1
+                if word_2.annotations[0]['full_match']:
+                    words_with_normalization_aligned_before_disamb += 1
+                if word_3.annotations[0]['full_match']:
+                    words_with_normalization_aligned_after_disamb += 1
+        words_total += len( morph_1_diff )
+    print('='*80)
+    print( ' Only words with normalizations (spelling suggestions): ', words_with_normalization, '/', words_total )
+    print( '   Correctly analysed (without disambiguation):         ', words_with_normalization_aligned_before_disamb, '/', words_with_normalization, '   {:.02f}%'.format((words_with_normalization_aligned_before_disamb/words_with_normalization)*100.0) )
+    print( '       - Correctly disambiguated:                       ', words_with_normalization_aligned_after_disamb, '/', words_with_normalization, '   {:.02f}%'.format((words_with_normalization_aligned_after_disamb/words_with_normalization)*100.0) )
+    incorrect = words_with_normalization_aligned_before_disamb - words_with_normalization_aligned_after_disamb
+    print( '       - Incorrectly disambiguated:                     ', incorrect, '/', words_with_normalization, '   {:.02f}%'.format((incorrect/words_with_normalization)*100.0) )
+    norm_words_no_ud_match = words_with_normalization - words_with_normalization_aligned_before_disamb
+    print( '   Word\'s analyses cannot be matched to UD word\'s:      ', norm_words_no_ud_match, '/', words_with_normalization, '   {:.02f}%'.format((norm_words_no_ud_match/words_with_normalization)*100.0) )
+    print()
+

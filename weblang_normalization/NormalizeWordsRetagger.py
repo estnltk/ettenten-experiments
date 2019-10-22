@@ -8,7 +8,7 @@ from estnltk.taggers.morph_analysis.proxy import MorphAnalyzedToken
 import nltk
 
 class NormalizeWordsRetagger(Retagger):
-    """Retagger for adding normalized forms as attributes of words layer for words of non-standard varieties of Estonian."""
+    """Retagger for adding normalized forms as attributes of words layer for words of Estonian Internet language, particularly the language characteristic to etTenTen."""
     
     conf_param = ["use_letter_reps", "use_diacritics_fixes", "use_diacritics_fixes_1", "use_diacritics_fixes_2", 
                  "use_diacritics_fixes_3"]

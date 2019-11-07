@@ -11,7 +11,7 @@ class NormalizeWordsRetagger(Retagger):
     """Retagger for adding normalized forms as attributes of words layer for words of Estonian Internet language, particularly the language characteristic to etTenTen."""
     
     conf_param = ["use_letter_reps", "use_diacritics_fixes", "use_diacritics_fixes_1", "use_diacritics_fixes_2", 
-                 "use_diacritics_fixes_3"]
+                 "use_diacritics_fixes_3", "_english_words"]
     
     
     def __init__(self,
@@ -36,6 +36,7 @@ class NormalizeWordsRetagger(Retagger):
             output_attributes=output_attributes
 
         self.output_attributes=output_attributes
+        self._english_words = set(nltk.corpus.words.words())
         
 
     def _change_layer(self, text, layers, status):
@@ -466,7 +467,6 @@ class NormalizeWordsRetagger(Retagger):
                     add_normalized_form(new_c, form_to_use, candidates, spelling_results)
 
             if self.use_diacritics_fixes == True: 
-                english_words = set(nltk.corpus.words.words())
                 new_candidates=[]
                 for candidate, spelling in zip(candidates, spelling_results):
                     if spelling==False:
@@ -477,8 +477,8 @@ class NormalizeWordsRetagger(Retagger):
                         if len(words)-1>word_id:
                             next_word=words[word_id+1]
                         if (candidate[0].isupper() and (w.start>2 and words.text[w.start-2:w.start-1] in ["!","?","."])) \
-                        or (candidate in english_words and ((not type(prev_word) is str and prev_word.text in english_words) \
-                                                            or (not type(next_word) is str and next_word.text in english_words))) \
+                        or (candidate in self._english_words and ((not type(prev_word) is str and prev_word.text in self._english_words) \
+                                                            or (not type(next_word) is str and next_word.text in self._english_words))) \
                         or (MorphAnalyzedToken(candidate.capitalize()).is_word==True):
                             continue
                         else:

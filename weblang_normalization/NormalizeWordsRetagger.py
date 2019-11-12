@@ -11,7 +11,7 @@ class NormalizeWordsRetagger(Retagger):
     """Retagger for adding normalized forms as attributes of words layer for words of Estonian Internet language, particularly the language characteristic to etTenTen."""
     
     conf_param = ["use_letter_reps", "use_diacritics_fixes", "use_diacritics_fixes_1", "use_diacritics_fixes_2", 
-                 "use_diacritics_fixes_3", "_english_words"]
+                 "use_diacritics_fixes_3", "use_vabamorf_speller", "_english_words"]
     
     
     def __init__(self,
@@ -20,19 +20,21 @@ class NormalizeWordsRetagger(Retagger):
                  use_diacritics_fixes=True,
                  use_diacritics_fixes_1=True,
                  use_diacritics_fixes_2=False,
-                 use_diacritics_fixes_3=False):
+                 use_diacritics_fixes_3=False,
+                 use_vabamorf_speller=True):
 
         self.use_letter_reps = use_letter_reps
         self.use_diacritics_fixes = use_diacritics_fixes
         self.use_diacritics_fixes_1 = use_diacritics_fixes_1
         self.use_diacritics_fixes_2 = use_diacritics_fixes_2
         self.use_diacritics_fixes_3 = use_diacritics_fixes_3
+        self.use_vabamorf_speller = use_vabamorf_speller
         output_attributes=()
         
         self.input_layers = [words_layer]
         self.output_layer = words_layer
         
-        if use_letter_reps is True or use_diacritics_fixes is True:
+        if use_letter_reps is True or use_diacritics_fixes is True or use_vabamorf_speller is True:
             output_attributes=output_attributes
 
         self.output_attributes=output_attributes
@@ -502,3 +504,10 @@ class NormalizeWordsRetagger(Retagger):
                 w.clear_annotations()
                 for candidate in candidates:
                     w.add_annotation(Annotation(w, normalized_form=candidate) )
+            elif self.use_vabamorf_speller == True:
+                if w.normalized_form[0] == None:
+                    spell_check=vm.spellcheck([w.text], suggestions=True)
+                    if len(spell_check[0]["suggestions"])!=0:
+                        w.clear_annotations()
+                        for spell_sugg in spell_check[0]["suggestions"]:
+                            w.add_annotation(Annotation(w, normalized_form=spell_sugg) )
